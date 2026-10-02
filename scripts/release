@@ -1,0 +1,81 @@
+#!/bin/sh
+# Ships plugins the way an end user receives them: checks, patch bump, tag,
+# push, then updates the installed copies from the marketplace.
+#
+#   scripts/release ambient arcade
+#
+# Installs are cached per version, so an update without a bump fetches
+# nothing. Restart Claude Code afterwards (`claude -c` resumes).
+set -eu
+
+MARKET=shabier
+cd "$(dirname "$0")/.."
+
+[ $# -gt 0 ] || { echo "usage: scripts/release <plugin>..." >&2; exit 2; }
+if [ -n "$(git status --porcelain)" ]; then
+  echo "commit first: a release commit carries version bumps only" >&2
+  exit 1
+fi
+
+for p in "$@"; do
+  [ -d "plugins/$p" ] || { echo "no such plugin: plugins/$p" >&2; exit 1; }
+  echo "== $p: checks"
+  # Captured, not piped: POSIX sh has no pipefail, so `cmd | tail` hides a failure.
+  out=$(claude plugin validate "plugins/$p" 2>&1) || { echo "$out"; exit 1; }
+  echo "$out" | grep -E "✔|⚠" || true
+  out=$(claude plugin test "plugins/$p" 2>&1) || { echo "$out"; exit 1; }
+  echo "$out" | tail -3
+  if [ -d "plugins/$p/.claude-plugin/types" ]; then
+    tsc -p "plugins/$p"
+  else
+    echo "$p: no engine types yet, tsc skipped (they appear after one --plugin-dir load)"
+  fi
+done
+
+shipped=""
+for p in "$@"; do
+  v=$(python3 - "$p" "$MARKET" <<'EOF'
+import json, sys
+
+name = sys.argv[1]
+
+def bump(path, edit):
+    data = json.load(open(path))
+    out = edit(data)
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2)
+        f.write('\n')
+    return out
+
+def plugin(data):
+    major, minor, patch = (int(n) for n in data['version'].split('.'))
+    data['version'] = f'{major}.{minor}.{patch + 1}'
+    return data['version']
+
+version = bump(f'plugins/{name}/.claude-plugin/plugin.json', plugin)
+
+def market(data):
+    for entry in data['plugins']:
+        if entry['name'] == name:
+            entry['version'] = version
+
+bump('.claude-plugin/marketplace.json', market)
+print(version)
+EOF
+)
+  shipped="$shipped $p@$v"
+done
+
+git add .claude-plugin/marketplace.json plugins/*/.claude-plugin/plugin.json
+git commit -q -m "release$shipped"
+for p in "$@"; do claude plugin tag "plugins/$p" -m "$p %s" >/dev/null; done
+git push -q --follow-tags
+
+claude plugin marketplace update "$MARKET" >/dev/null
+for p in "$@"; do
+  # First release of a plugin: nothing to update yet, so install it.
+  out=$(claude plugin update "$p@$MARKET" 2>&1) || out=$(claude plugin install "$p@$MARKET" 2>&1) || { echo "$out"; exit 1; }
+  echo "$out" | tail -1
+done
+
+echo "shipped:$shipped. Restart Claude Code to load it (claude -c resumes)."

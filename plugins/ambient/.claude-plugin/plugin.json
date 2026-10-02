@@ -1,0 +1,13 @@
+{
+  "name": "ambient",
+  "version": "0.1.0",
+  "description": "Animated 8-bit wallpapers in the docked side pane: koi pond, mountains, metropolis, neon district.",
+  "author": {
+    "name": "Shabier",
+    "url": "https://github.com/shabier"
+  },
+  "homepage": "https://github.com/shabier/claude-plugins/tree/main/plugins/ambient",
+  "repository": "https://github.com/shabier/claude-plugins",
+  "types": "./types/index.d.ts",
+  "license": "GPL-3.0-or-later"
+}

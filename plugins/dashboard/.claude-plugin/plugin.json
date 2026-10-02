@@ -1,0 +1,13 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "description": "Bento dashboard in the docked side pane: clock, context and compaction forecast, todo, git, Hacker News. Widgets on a pure contract.",
+  "author": {
+    "name": "Shabier",
+    "url": "https://github.com/shabier"
+  },
+  "homepage": "https://github.com/shabier/claude-plugins/tree/main/plugins/dashboard",
+  "repository": "https://github.com/shabier/claude-plugins",
+  "types": "./types/index.d.ts",
+  "license": "GPL-3.0-or-later"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "arcade",
+  "version": "0.1.0",
+  "description": "Five games in the docked side pane: Rail Runner, Road Hopper, Block Drop, Flap, 2048. Hides below 110 columns.",
+  "author": {
+    "name": "Shabier",
+    "url": "https://github.com/shabier"
+  },
+  "homepage": "https://github.com/shabier/claude-plugins/tree/main/plugins/arcade",
+  "repository": "https://github.com/shabier/claude-plugins",
+  "types": "./types/index.d.ts",
+  "license": "GPL-3.0-or-later"
+}

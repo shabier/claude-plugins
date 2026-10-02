@@ -1,0 +1,5 @@
+# Written by Claude Code on every load. Anthropic's, regenerated per release.
+**/.claude-plugin/types/
+
+.DS_Store
+node_modules/

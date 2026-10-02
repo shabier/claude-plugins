@@ -1,0 +1,49 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "shabier",
+  "description": "Claude Code mods for the side pane: a dashboard, wallpapers, games.",
+  "owner": {
+    "name": "Shabier",
+    "url": "https://github.com/shabier"
+  },
+  "plugins": [
+    {
+      "name": "dashboard",
+      "description": "Bento grid in the side pane: clock, todo, context forecast, git, Hacker News.",
+      "source": "./plugins/dashboard",
+      "version": "0.1.0",
+      "category": "productivity",
+      "tags": [
+        "dashboard",
+        "pane",
+        "git",
+        "todo",
+        "function-hooks"
+      ]
+    },
+    {
+      "name": "ambient",
+      "description": "Animated 8-bit wallpapers in the side pane.",
+      "source": "./plugins/ambient",
+      "version": "0.1.0",
+      "category": "fun",
+      "tags": [
+        "wallpaper",
+        "pane",
+        "function-hooks"
+      ]
+    },
+    {
+      "name": "arcade",
+      "description": "Five small games in the side pane.",
+      "source": "./plugins/arcade",
+      "version": "0.1.0",
+      "category": "fun",
+      "tags": [
+        "games",
+        "pane",
+        "function-hooks"
+      ]
+    }
+  ]
+}
